@@ -1,0 +1,150 @@
+#database:
+  #  params: useSSL=false&allowPublicKeyRetrieval=true&profileSQL=true&logger=Slf4JLogger
+#  params: useUnicode=true&characterEncoding=utf8&useSSL=false&profileSQL=true&logger=Slf4JLogger
+
+spring:
+  messages:
+    basename: messages/error/message, messages/error/message_user, messages/error/message_order
+  mvc:
+    throw-exception-if-no-handler-found: true
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+  web:
+    resources:
+      add-mappings: false
+  jackson:
+    date-format: ${spring.mvc.format.date-time}
+  datasource:
+    driver-class-name: org.h2.Driver
+    #    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      jdbc-url: ${spring.datasource.url}
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        dialect: org.hibernate.dialect.H2Dialect
+  #        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+  main:
+    banner-mode: off
+  data:
+    redis:
+      host: localhost
+      password: demo
+  cache:
+    type: redis
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            loggerLevel: FULL
+          NaverPayClient:
+            connect-timeout: 60000
+            default-request-headers:
+              X-Naver-Client-Id: 1234
+              X-Naver-Client-Secret: 1234
+              X-NaverPay-Chain-Id: 123213
+          KakaoPayClient:
+            default-request-headers:
+              Authorization: KakaoAK
+      okhttp:
+        enabled: true
+  h2:
+    console:
+      enabled: true
+
+springdoc:
+  context-root: docs
+  model-and-view-allowed: true
+  api-docs:
+    path: /${springdoc.context-root}/api-docs.json
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /${springdoc.context-root}/index.do
+    operations-sorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+    doc-expansion: none
+    tags-sorter: alpha
+
+logging:
+  config: classpath:log4j2.xml
+
+payment:
+  naver-pay:
+    url: https://dev.apis.naver.com
+  kakao-pay:
+    url: https://kapi.kakao.com
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url:
+    username:
+    password:
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url:
+    username:
+    password:
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: qa
+  datasource:
+    url:
+    username:
+    password:
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url:
+    username:
+    password:
+
+---
